@@ -1,5 +1,9 @@
 ---
-const { portrait = '/images/neekoy.jpg' } = Astro.props;
+import { Image } from 'astro:assets';
+import neekoy from '../assets/images/neekoy.jpg';
+
+/** portrait = imported ImageMetadata, not a URL string — so it gets optimized at build time. */
+const { portrait = neekoy } = Astro.props;
 ---
 <section id="about" aria-labelledby="about-heading" class="border-b border-slate-800">
   <div class="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:gap-16 lg:px-8 lg:py-20">
@@ -7,12 +11,15 @@ const { portrait = '/images/neekoy.jpg' } = Astro.props;
       <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-purple-400">$ whoami</p>
       <h2 id="about-heading" class="mt-2 text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl">About me</h2>
       <p class="mt-5 max-w-xl text-pretty text-base leading-relaxed text-slate-400">
-        I'm Neekoy — a Lead DevOps Engineer with 15 years in IT, most of them spent keeping other people's production
-        alive. These days I spend my evenings on the offensive side: labs, CTFs, CVE write-ups, and the slow work of
-        turning what I break into detection rules my own team can run. This blog is that journey, documented as it
-        happens — no polish, no gatekeeping.
-      </p>
-
+      I'm Neekoy — a Lead DevOps Engineer with 19+ years professionally in IT, and around a decade before
+      that as a hobbyist. I still remember of our first 486 computer where we ran DOOM and my brother
+      taught me how to pass the labyrinths.</p>
+      <p class="mt-5 max-w-xl text-pretty text-base leading-relaxed text-slate-400">
+      I am just now starting to do a deep dive into CyberSecurity, so you can follow along for
+      posts about my learnings, my progress, and overall cool things I stumble upon during this journey.</p>
+      <p class="mt-5 max-w-xl text-pretty text-base leading-relaxed text-slate-400">
+      I will also be posting interesting moments from my day job, so if you're into DevOps, CyberSecurity,
+      Linux Administration, and gadgets, follow along - it's going to be fun!</p>
       <dl class="mt-8 grid gap-4 font-mono text-[12px] sm:grid-cols-3">
         <div class="border border-slate-800 bg-slate-900/50 p-4">
           <dt class="text-slate-500">Day job</dt>
@@ -20,11 +27,11 @@ const { portrait = '/images/neekoy.jpg' } = Astro.props;
         </div>
         <div class="border border-slate-800 bg-slate-900/50 p-4">
           <dt class="text-slate-500">Years in IT</dt>
-          <dd class="mt-1 text-green-400">15</dd>
+          <dd class="mt-1 text-green-400">19+</dd>
         </div>
         <div class="border border-slate-800 bg-slate-900/50 p-4">
           <dt class="text-slate-500">Currently learning</dt>
-          <dd class="mt-1 text-purple-300">Offensive security</dd>
+          <dd class="mt-1 text-purple-300">The basics</dd>
         </div>
       </dl>
 
@@ -36,7 +43,9 @@ const { portrait = '/images/neekoy.jpg' } = Astro.props;
 
     <figure class="m-0 min-w-0">
       <div class="relative border border-slate-800 bg-slate-900/50 p-2 shadow-2xl shadow-purple-950/40">
-        <img src={portrait} alt="Neekoy" width="640" height="800" loading="lazy" decoding="async"
+        <Image src={portrait} alt="Neekoy" layout="none"
+          widths={[320, 480, 640, 960]} sizes="(min-width: 1024px) 460px, 100vw"
+          loading="lazy" decoding="async"
           class="aspect-[4/5] w-full object-cover" />
       </div>
       <figcaption class="mt-3 flex items-center gap-2 font-mono text-[11px] text-slate-500">

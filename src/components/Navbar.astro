@@ -2,6 +2,8 @@
 const { active = 'home' } = Astro.props;
 const on = 'border-b-2 border-green-400 px-3 py-2 font-medium text-green-400';
 const off = 'border-b-2 border-transparent px-3 py-2 text-slate-400 transition-colors hover:border-slate-700 hover:text-slate-100';
+const mOn = 'block py-2 text-green-400';
+const mOff = 'block py-2 text-slate-400';
 ---
 <header class="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
   <nav aria-label="Primary" class="mx-auto flex max-w-7xl items-center gap-6 px-5 py-3 lg:px-8">
@@ -15,9 +17,9 @@ const off = 'border-b-2 border-transparent px-3 py-2 text-slate-400 transition-c
     </a>
 
     <ul class="ml-2 hidden items-center gap-1 font-mono text-[13px] md:flex">
-      <li><a href="/" class={active === 'home' ? on : off} aria-current={active === 'home' ? 'page' : undefined}>~/home</a></li>
-      <li><a href="/#recent" class={active === 'articles' ? on : off} aria-current={active === 'articles' ? 'page' : undefined}>/articles</a></li>
-      <li><a href="/#about" class={active === 'about' ? on : off} aria-current={active === 'about' ? 'page' : undefined}>/about</a></li>
+      <li><a href="/" data-spy="hero" data-on={on} data-off={off} class={active === 'home' ? on : off} aria-current={active === 'home' ? 'page' : undefined}>~/home</a></li>
+      <li><a href="/#recent" data-spy="recent feed" data-on={on} data-off={off} class={active === 'articles' ? on : off} aria-current={active === 'articles' ? 'page' : undefined}>/articles</a></li>
+      <li><a href="/#about" data-spy="about" data-on={on} data-off={off} class={active === 'about' ? on : off} aria-current={active === 'about' ? 'page' : undefined}>/about</a></li>
     </ul>
 
     <div class="ml-auto flex items-center gap-3">
@@ -33,10 +35,10 @@ const off = 'border-b-2 border-transparent px-3 py-2 text-slate-400 transition-c
   </nav>
 
   <ul id="nb-mobile" hidden class="border-t border-slate-800 bg-slate-950 px-5 pb-4 pt-2 font-mono text-sm md:hidden">
-    <li><a href="/" class="block py-2 text-green-400">~/home</a></li>
-    <li><a href="/#recent" class="block py-2 text-slate-400">/articles</a></li>
-    <li><a href="/#feed" class="block py-2 text-slate-400">/archive</a></li>
-    <li><a href="/#about" class="block py-2 text-slate-400">/about</a></li>
+    <li><a href="/" data-spy="hero" data-on={mOn} data-off={mOff} class={mOn}>~/home</a></li>
+    <li><a href="/#recent" data-spy="recent" data-on={mOn} data-off={mOff} class={mOff}>/articles</a></li>
+    <li><a href="/#feed" data-spy="feed" data-on={mOn} data-off={mOff} class={mOff}>/archive</a></li>
+    <li><a href="/#about" data-spy="about" data-on={mOn} data-off={mOff} class={mOff}>/about</a></li>
   </ul>
 </header>
 
@@ -48,4 +50,29 @@ const off = 'border-b-2 border-transparent px-3 py-2 text-slate-400 transition-c
     panel.hidden = !open;
     burger.setAttribute('aria-expanded', String(open));
   });
+
+  // Nav scrollspy — highlights the link owning the section in view. No-ops off the home page.
+  const spied = [...document.querySelectorAll('[data-spy]')];
+  const sections = [...new Set(spied.flatMap((l) => l.dataset.spy.split(' ')))]
+    .map((id) => document.getElementById(id))
+    .filter(Boolean);
+  if (sections.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        const hit = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (!hit) return;
+        spied.forEach((l) => {
+          const isOn = l.dataset.spy.split(' ').includes(hit.target.id);
+          l.className = isOn ? l.dataset.on : l.dataset.off;
+          // aria-current stays on the primary nav only, so the mobile duplicate can't announce a second one.
+          if (isOn && l.closest('nav')) l.setAttribute('aria-current', 'page');
+          else l.removeAttribute('aria-current');
+        });
+      },
+      { rootMargin: '-96px 0px -70% 0px', threshold: 0 }
+    );
+    sections.forEach((s) => io.observe(s));
+  }
 </script>

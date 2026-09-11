@@ -11,7 +11,9 @@ category: "Defensive Ops"        # Exploits | Crypto | Defensive Ops  (add more 
 # ─────────────────────────────────────────────────────────────────────────────
 # OPTIONAL — delete any line you don't need.
 # ─────────────────────────────────────────────────────────────────────────────
-heroImage: "/images/linux-fundamentals.jpg"   # full-bleed image under the header
+heroImage: "/images/linux-fundamentals.jpg"   # full-bleed image under the header.
+                                              # Path is relative to src/assets, so this file
+                                              # lives at src/assets/images/linux-fundamentals.jpg
 heroImageAlt: "A terminal session on a dark background"
 author: "Neekoy"                 # defaults to "Neekoy" when omitted
 cve: ""                          # e.g. "CVE-2026-41880" — renders next to the category
@@ -75,6 +77,28 @@ A process is a pid, a parent, a user, and a set of open file descriptors. That i
 The one that surprises people: **a deleted file is not gone while a process still holds the descriptor**. Disk stays
 full, and the contents are still readable through `/proc/<pid>/fd/`.
 
+<!-- ─────────────────────────────────────────────────────────────────────────────
+     INLINE IMAGE — this is the whole pattern. Standard Markdown, nothing else.
+
+     • Put the file in  src/assets/images/  and reference it with a RELATIVE path.
+       From src/pages/articles/ that is  ../../assets/images/<name>.<ext>
+       A relative path under src/ is what triggers the build-time pipeline.
+     • Do NOT use an absolute /images/... path, and do NOT hand-write a raw img
+       tag. Both bypass optimization and ship the original bytes untouched.
+     • Astro fills in width, height, loading="lazy", decoding="async", plus a
+       srcset + sizes, from the file itself. Never hand-write those — they can
+       only go stale when you swap the image.
+     • Output is WebP with a content-hashed filename, so it caches immutably.
+     • alt describes what the image shows technically — never "screenshot".
+     • Filenames are case-sensitive on Cloudflare Pages — keep them lowercase-kebab.
+     • No need to pre-compress or pre-resize: the build re-encodes and emits a
+       width ladder. Commit the highest-quality original you have.
+     ───────────────────────────────────────────────────────────────────────── -->
+
+![A process tree from ps -ef --forest, with a shell reparented to PID 1](../../assets/images/linux-fundamentals.jpg)
+
+Read the indentation, not the pids: reparenting to PID 1 is what tells you the original parent is already gone.
+
 ## Pipes are the point
 
 The shell's real feature is that small programs compose. This is a rough-and-ready top-talkers report from an access
@@ -89,6 +113,13 @@ awk '{print $1}' access.log \
 ```
 
 Once you internalise `sort | uniq -c | sort -rn`, you stop reaching for a dashboard to answer simple questions.
+
+<!-- A second image, same pattern. Styling is automatic: the border comes from
+     `prose-img:border prose-img:border-slate-800` in ArticleLayout.astro, so
+     body images never need classes. If you want a caption, you need MDX — the
+     plain-Markdown trade-off is deliberate. -->
+
+![Top-talkers output: request counts descending beside their source addresses](../../assets/images/linux-fundamentals.jpg)
 
 ### Redirection you will actually use
 
@@ -107,5 +138,5 @@ the model above, and nothing more.
 ---
 
 *This file is the kitchen-sink example: copy it, strip the comments, and keep the frontmatter block. Every feature the
-article layout supports — hero image, tags, TOC from the `##` headings, prev/next nav, Shiki-highlighted code, tables,
-blockquotes, footnote-style italics — appears somewhere above.*
+article layout supports — hero image, inline figures, tags, TOC from the `##` headings, prev/next nav, Shiki-highlighted
+code, tables, blockquotes, footnote-style italics — appears somewhere above.*

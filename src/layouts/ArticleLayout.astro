@@ -10,7 +10,7 @@
  *   description: "A header-parsing desync lets a crafted request reach the admin socket."
  *   pubDate: 2026-09-07
  *   category: "Exploits"          # Exploits | Crypto | Defensive Ops (src/lib/categories.js)
- *   heroImage: "/images/rce.jpg"  # optional
+ *   heroImage: "/images/rce.jpg"  # optional — resolved against src/assets, see `heroes` below
  *   cve: "CVE-2026-41880"         # optional
  *   cvss: 9.8                     # optional
  *   tags: ["http", "kubernetes"]  # optional
@@ -19,6 +19,7 @@
  * Astro hands this layout `frontmatter`, `headings`, `rawContent()` and `url`.
  */
 import BaseLayout from './BaseLayout.astro';
+import { Image } from 'astro:assets';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { categoryStyle, formatDate, readingTime, allArticles } from '../lib/categories.js';
@@ -26,6 +27,17 @@ import { categoryStyle, formatDate, readingTime, allArticles } from '../lib/cate
 const { frontmatter: fm, headings = [], rawContent, url } = Astro.props;
 const c = categoryStyle(fm.category);
 const minutes = fm.readingTime ?? readingTime(rawContent?.() ?? '');
+
+/**
+ * Hero images: `heroImage` is a plain frontmatter *string*, so Astro can't see it as an
+ * image on its own. This glob imports every asset at build time, letting us map the
+ * string onto real ImageMetadata (dimensions + hashed, optimized src).
+ *
+ * Keep writing `heroImage: "/images/foo.jpg"` — the file lives at src/assets/images/foo.jpg.
+ * Unmatched paths fall through to `null` and the hero is simply skipped, same as before.
+ */
+const heroes = import.meta.glob('../assets/**/*.{jpg,jpeg,png,webp,avif}', { eager: true });
+const hero = fm.heroImage ? heroes[`../assets${fm.heroImage}`]?.default ?? null : null;
 
 // Sticky TOC: h2 + h3 only, so deep nesting can't wreck the rail.
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
@@ -86,9 +98,13 @@ const prose = [
         </div>
       </header>
 
-      {fm.heroImage && (
+      {hero && (
         <figure class="m-0 border-b border-slate-800 bg-slate-950">
-          <img src={fm.heroImage} alt={fm.heroImageAlt ?? fm.title} width="1600" height="800" loading="eager"
+          {/* layout="none" keeps the crop treatment below in charge of sizing; widths/sizes
+              still emit a srcset. eager + high priority because this is the LCP element. */}
+          <Image src={hero} alt={fm.heroImageAlt ?? fm.title} layout="none"
+            widths={[640, 1024, 1280, 1920, 2560]} sizes="(min-width: 1280px) 1280px, 100vw"
+            loading="eager" fetchpriority="high" decoding="sync"
             class="mx-auto block max-h-[28rem] w-full max-w-7xl object-cover opacity-90" />
         </figure>
       )}
