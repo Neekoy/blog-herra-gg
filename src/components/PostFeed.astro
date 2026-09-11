@@ -1,0 +1,54 @@
+---
+import ArticleCard from './ArticleCard.astro';
+const { posts = [] } = Astro.props;
+
+// Tabs are derived from the posts themselves — no hardcoded category list.
+const categories = [...new Set(posts.map((p) => p.frontmatter.category))];
+---
+<section id="feed" aria-labelledby="feed-heading" class="border-b border-slate-800">
+  <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8 lg:py-20">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="font-mono text-[11px] uppercase tracking-[0.25em] text-green-400">$ ls -la ./articles</p>
+        <h2 id="feed-heading" class="mt-2 text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl">Full archive</h2>
+      </div>
+
+      <div role="tablist" aria-label="Filter articles by category" class="flex flex-wrap gap-2 font-mono text-[12px]">
+        <button type="button" role="tab" aria-selected="true" data-filter="all"
+          class="nb-tab border border-purple-500/50 bg-purple-600/20 px-3 py-1.5 text-purple-300">all</button>
+        {categories.map((cat) => (
+          <button type="button" role="tab" aria-selected="false" data-filter={cat}
+            class="nb-tab border border-slate-800 px-3 py-1.5 text-slate-400 hover:border-slate-700 hover:text-slate-200">
+            {cat.toLowerCase().replace(/\s+/g, '-')}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <ul id="nb-cards" class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => (
+        <li class="min-w-0" data-cat={post.frontmatter.category}><ArticleCard post={post} /></li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<script>
+  const tabs = document.querySelectorAll('.nb-tab');
+  const cards = document.querySelectorAll('#nb-cards [data-cat]');
+  const ON = ['border-purple-500/50', 'bg-purple-600/20', 'text-purple-300'];
+  const OFF = ['border-slate-800', 'text-slate-400'];
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      tabs.forEach((t) => {
+        const active = t === tab;
+        t.setAttribute('aria-selected', String(active));
+        ON.forEach((c) => t.classList.toggle(c, active));
+        OFF.forEach((c) => t.classList.toggle(c, !active));
+      });
+      const f = tab.dataset.filter;
+      cards.forEach((card) => { card.hidden = !(f === 'all' || card.dataset.cat === f); });
+    });
+  });
+</script>

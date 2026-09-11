@@ -1,0 +1,110 @@
+---
+/**
+ * Terminal.astro — typewriter whois replay. Pure vanilla JS, no hydration.
+ * Pass your own lines: <Terminal lines={[{ t:'prompt', text:'...' }]} />
+ * Types: prompt | ok | dim | head | warn | crit | blank
+ */
+const {
+  label = 'root@herra — owasp/whois',
+  prompt = '~/owasp/',
+  lines = [
+    { t: 'prompt', text: 'whois herra.gg' },
+    { t: 'ok', text: 'WHOIS: herra.gg' },
+    { t: 'blank', text: '' },
+    { t: 'head', text: 'Domain:' },
+    { t: 'dim', text: '     herra.gg' },
+    { t: 'blank', text: '' },
+    { t: 'head', text: 'Domain Status:' },
+    { t: 'ok', text: '     Active' },
+    { t: 'dim', text: '     Transfer Prohibited by Registrar' },
+    { t: 'blank', text: '' },
+    { t: 'head', text: 'Registrant:' },
+    { t: 'crit', text: '     **REDACTED**' },
+    { t: 'blank', text: '' },
+    { t: 'head', text: 'Registrar:' },
+    { t: 'dim', text: '     NameCheap, Inc (https://www.namecheap.com)' },
+    { t: 'blank', text: '' },
+    { t: 'head', text: 'Relevant dates:' },
+    { t: 'dim', text: '     Registered on 03rd September 2026 at 23:05:29.208' },
+    { t: 'dim', text: '     Registry fee due on 03rd September each year' },
+    { t: 'blank', text: '' },
+    { t: 'head', text: 'Registration status:' },
+    { t: 'dim', text: '     Registered until cancelled' },
+    { t: 'blank', text: '' },
+    { t: 'head', text: 'Name servers:' },
+    { t: 'warn', text: '     dns1.registrar-servers.com' },
+    { t: 'warn', text: '     dns2.registrar-servers.com' },
+  ],
+} = Astro.props;
+---
+<div class="min-w-0">
+  <div class="border border-slate-800 bg-slate-950 shadow-2xl shadow-green-500/10">
+    <div class="flex items-center gap-3 border-b border-slate-800 bg-slate-900 px-4 py-2.5">
+      <span class="flex gap-1.5" aria-hidden="true">
+        <span class="h-2.5 w-2.5 rounded-full bg-red-500/70"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-purple-500/70"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-green-500/70"></span>
+      </span>
+      <p class="font-mono text-[11px] uppercase tracking-widest text-slate-500">{label}</p>
+      <span class="ml-auto font-mono text-[11px] text-green-400">tty1</span>
+    </div>
+    <div
+      id="nb-term"
+      role="log"
+      aria-live="polite"
+      aria-label="Terminal output"
+      data-prompt={prompt}
+      data-lines={JSON.stringify(lines)}
+      class="h-[34rem] overflow-hidden px-4 py-4 font-mono text-[12px] leading-[1.55] text-slate-400 sm:text-[12.5px]"
+    ></div>
+  </div>
+  <p class="mt-3 font-mono text-[11px] text-slate-600">// live capture — replayed on each visit</p>
+</div>
+
+<script>
+  const el = document.getElementById('nb-term');
+  if (el) {
+    const LINES = JSON.parse(el.dataset.lines);
+    const PROMPT = `<span class="text-purple-400">${el.dataset.prompt}</span><span class="text-slate-500">:</span> `;
+    const STYLE = {
+      prompt: 'text-slate-200', dim: 'text-slate-500', head: 'text-purple-300',
+      ok: 'text-green-400', warn: 'text-purple-300', crit: 'text-red-400', blank: '',
+    };
+
+    let i = 0;
+    const nextLine = () => {
+      if (i >= LINES.length) {
+        const done = document.createElement('p');
+        done.className = 'mt-2 text-green-400';
+        done.innerHTML = PROMPT + '<span class="nb-caret">&#9608;</span>';
+        el.appendChild(done);
+        return;
+      }
+      const line = LINES[i++];
+      const p = document.createElement('p');
+      el.appendChild(p);
+
+      if (line.t === 'blank') { p.className = 'h-2'; setTimeout(nextLine, 90); return; }
+      p.className = 'whitespace-pre-wrap break-words ' + STYLE[line.t];
+
+      const prefix = line.t === 'prompt' ? PROMPT : '';
+      const body = line.text;
+      const step = line.t === 'prompt' ? 26 : 6;
+      let c = 0;
+      const type = () => {
+        c += line.t === 'prompt' ? 1 : 2;
+        p.innerHTML = prefix + body.slice(0, c).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+        if (c < body.length) setTimeout(type, step);
+        else setTimeout(nextLine, line.t === 'prompt' ? 420 : 120);
+      };
+      type();
+    };
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) { io.disconnect(); nextLine(); } });
+      }, { threshold: 0.25 });
+      io.observe(el);
+    } else { nextLine(); }
+  }
+</script>

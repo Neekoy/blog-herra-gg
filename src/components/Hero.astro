@@ -1,0 +1,25 @@
+---
+import Terminal from './Terminal.astro';
+---
+<section aria-labelledby="hero-heading" class="nb-grid relative overflow-hidden border-b border-slate-800">
+  <div class="pointer-events-none absolute -left-24 -top-32 h-80 w-80 rounded-full bg-purple-600/20 blur-3xl"></div>
+  <div class="pointer-events-none absolute -right-20 top-24 h-72 w-72 rounded-full bg-green-500/10 blur-3xl"></div>
+
+  <div class="relative mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-14 lg:px-8 lg:py-24">
+    <div class="min-w-0">
+      <h1 id="hero-heading" class="text-pretty text-[50px] font-bold leading-[1.08] tracking-tight text-slate-50">
+        <span class="text-purple-400">blog.herra.gg<br /></span>A Lead DevOps Engineer's journey into CyberSecurity
+      </h1>
+      <p class="mt-5 max-w-xl text-pretty text-base leading-relaxed text-slate-400 sm:text-lg">
+        Hey guys, I'm Neekoy and I'm a Lead DevOps Engineer with 15 years of experience in IT. In this blog you can
+        follow my journey from a beginner to pro in CyberSecurity and whatever I find interesting from the DevOps world.
+      </p>
+      <p class="mt-8 flex items-center gap-2 font-mono text-sm text-green-400">
+        Scroll down for articles
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+      </p>
+    </div>
+
+    <Terminal />
+  </div>
+</section>

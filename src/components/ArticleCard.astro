@@ -1,0 +1,30 @@
+---
+import { categoryStyle, stampDate, readingTime } from '../lib/categories.js';
+
+/** post = a module from allArticles(): { url, frontmatter, rawContent? } */
+const { post, wholeCardLink = true } = Astro.props;
+const fm = post.frontmatter;
+const c = categoryStyle(fm.category);
+const minutes = fm.readingTime ?? readingTime(post.rawContent?.() ?? fm.description ?? '');
+---
+<article class={`group relative flex h-full flex-col border border-slate-800 bg-slate-900/50 p-5 transition-colors ${c.border}`}>
+  <div class="flex items-center justify-between gap-3">
+    <p class={`border px-2 py-1 font-mono text-[10px] font-semibold uppercase tracking-widest ${c.badge}`}>{fm.category}</p>
+    <time datetime={fm.pubDate} class="font-mono text-[11px] text-slate-500">{stampDate(fm.pubDate)}</time>
+  </div>
+
+  <h3 class="mt-4 text-lg font-semibold leading-snug text-slate-100">
+    <a href={post.url} class={`text-slate-100 transition-colors ${c.title} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-500`}>
+      {wholeCardLink && <span class="absolute inset-0" aria-hidden="true"></span>}
+      {fm.title}
+    </a>
+  </h3>
+
+  <p class="mt-2 grow text-sm leading-relaxed text-slate-400">{fm.description}</p>
+
+  <footer class="mt-5 flex items-center gap-3 border-t border-slate-800 pt-3 font-mono text-[11px] text-slate-500">
+    {fm.cvss && <span class="text-red-400">CVSS {fm.cvss}</span>}
+    {fm.cvss && <span aria-hidden="true">·</span>}
+    <span>{minutes} min read</span>
+  </footer>
+</article>

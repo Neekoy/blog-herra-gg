@@ -1,0 +1,14 @@
+<section aria-labelledby="sub-heading" class="nb-grid border-b border-slate-800">
+  <div class="mx-auto max-w-3xl px-5 py-16 text-center">
+    <h2 id="sub-heading" class="text-2xl font-bold tracking-tight text-slate-50">Get new write-ups in your inbox</h2>
+    <p class="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-slate-400">
+      One mail per report. No tracking pixels, no sponsors, unsubscribe with a single header.
+    </p>
+    <form class="mx-auto mt-6 flex max-w-md flex-col gap-3 sm:flex-row" method="post" action="/api/subscribe">
+      <label for="nb-email" class="sr-only">Email address</label>
+      <input id="nb-email" name="email" type="email" required placeholder="you@domain.tld"
+        class="min-w-0 grow border border-slate-800 bg-slate-900/50 px-4 py-3 font-mono text-sm text-slate-200 placeholder:text-slate-600 focus:border-purple-500/60 focus:outline-none" />
+      <button type="submit" class="bg-purple-600 px-5 py-3 font-mono text-sm font-semibold text-white shadow-lg shadow-purple-500/30 transition-colors hover:bg-purple-500">Subscribe</button>
+    </form>
+  </div>
+</section>
