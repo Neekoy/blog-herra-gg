@@ -1,0 +1,14 @@
+{
+  // Static-only Worker: no `main`, so the whole deploy is the asset upload.
+  // `astro build` writes to dist/ — there is no public/ directory in this repo
+  // (images live in src/assets/ so Astro can optimize them at build time).
+  "name": "blog-herra-gg",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    // dist/404.html is the styled 404 page.
+    "not_found_handling": "404-page",
+    // Astro's default `build.format: 'directory'` emits /articles/<slug>/index.html.
+    "html_handling": "auto-trailing-slash"
+  }
+}
