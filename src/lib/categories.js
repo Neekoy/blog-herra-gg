@@ -24,6 +24,27 @@ export const CATEGORIES = {
     accent: 'text-green-400',
     rule: 'text-green-400',
   },
+  'Journey into CyberSecurity': {
+    badge: 'border-red-500/30 bg-red-500/10 text-red-400',
+    border: 'hover:border-red-500/40',
+    title: 'hover:text-red-300',
+    accent: 'text-red-400',
+    rule: 'text-red-400',
+  },
+  'My DevOps Adventures': {
+    badge: 'border-green-500/30 bg-green-500/10 text-green-400',
+    border: 'hover:border-green-500/40',
+    title: 'hover:text-green-300',
+    accent: 'text-green-400',
+    rule: 'text-green-400',
+  },
+  'Tutorials': {
+    badge: 'border-purple-500/40 bg-purple-600/15 text-purple-300',
+    border: 'hover:border-purple-500/40',
+    title: 'hover:text-purple-300',
+    accent: 'text-purple-300',
+    rule: 'text-purple-400',
+  },
 };
 
 const FALLBACK = {
