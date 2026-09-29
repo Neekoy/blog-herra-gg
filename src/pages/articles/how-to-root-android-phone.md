@@ -19,7 +19,7 @@ author: "Neekoy"                 # defaults to "Neekoy" when omitted
 cve: ""                          # e.g. "CVE-2026-41880" — renders next to the category
 cvss:                            # e.g. 9.8 — renders the red CVSS badge (header + card)
 tags: ["kali linux", "root android"]
-draft: true                     # true hides the post from the feed, nav and 404 list
+draft: false                     # true hides the post from the feed, nav and 404 list
 # readingTime: DO NOT SET — computed from the body at ~200 wpm
 ---
 
